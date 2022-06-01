@@ -1,13 +1,6 @@
 <script setup>
 import Todo from "./components/Todo.vue";
 import axios from "axios";
-
-const getTodos = async () => {
-  const { data } = await axios.get("http://localhost:4000/");
-  console.log(data);
-};
-
-getTodos();
 </script>
 
 <template>

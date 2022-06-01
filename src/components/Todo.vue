@@ -1,28 +1,43 @@
 <script setup>
 import { ref } from "vue";
+import axios from "axios";
 
 const todoEmpty = ref("");
-const addNewTodos = ref([]);
+const taskList = ref([]);
 const deleteTodo = ref([]);
 
-function pushingTodos() {
-  addNewTodos.value.push({
-    title: todoEmpty.value,
-    complete: false,
+const getTodos = async () => {
+  // const { data } = await axios.get("http://localhost:4000/todos");
+  const response = await fetch("http://localhost:4000/todos");
+  const data = await response.json();
+  taskList.value = data;
+  console.log(data);
+};
+
+// useEffect(() => {
+getTodos();
+// }, []);
+
+const addTodos = async () => {
+  axios.post("http://localhost:4000/todos", {
+    name: todoEmpty.value,
+    done: false,
   });
   todoEmpty.value = "";
-}
+  getTodos();
+};
 
-function deleteActivity(index) {
-  addNewTodos.value.splice(index, 1);
+function deleteActivity(id) {
+  axios.delete(`http://localhost:4000/todos/${id}`);
+  getTodos();
 }
 
 function completedTodos(target) {
-  addNewTodos.value.forEach((item, index) => {
-    if (index === target) {
-      item.complete = !item.complete;
-    }
-  });
+  // addNewTodos.value.forEach((item, index) => {
+  //   if (index === target) {
+  //     item.complete = !item.complete;
+  //   }
+  // });
 }
 </script>
 
@@ -32,19 +47,20 @@ function completedTodos(target) {
   <label>Do something!</label>
   <div class="todo-container">
     <input class="form-input" name="newTodo" v-model="todoEmpty" />
-    <button class="complete-btn" @click="pushingTodos">Add</button>
-    <button class="trash-btn" @click="deleteActivity(index)">Kill</button>
+    <button class="complete-btn" @click="addTodos">Add</button>
+    <!-- <button class="trash-btn" @click="deleteActivity(index)">Kill</button> -->
   </div>
 
   <div class="list">
-    <div v-for="(todo, index) in addNewTodos" class="listItem" :key="index">
-      <span :class="{ completed: todo.complete }">{{ todo.title }} </span>
+    <div v-for="(todo, index) in taskList" class="listItem" :key="index">
+      <span :class="{ completed: todo.done }">{{ todo.name }} </span>
       <input
         @click="completedTodos(index)"
         type="checkbox"
-        :checked="todo.complete"
-        v-model="todo.complete"
+        :checked="todo.done"
+        v-model="todo.done"
       />
+      <button class="trash-btn" @click="deleteActivity(todo.id)">Kill</button>
     </div>
   </div>
 </template>
