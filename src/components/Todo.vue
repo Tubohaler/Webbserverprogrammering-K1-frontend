@@ -7,16 +7,13 @@ const taskList = ref([]);
 const deleteTodo = ref([]);
 
 const getTodos = async () => {
-  // const { data } = await axios.get("http://localhost:4000/todos");
   const response = await fetch("http://localhost:4000/todos");
   const data = await response.json();
   taskList.value = data;
   console.log(data);
 };
 
-// useEffect(() => {
 getTodos();
-// }, []);
 
 const addTodos = async () => {
   axios.post("http://localhost:4000/todos", {
@@ -32,13 +29,7 @@ function deleteActivity(id) {
   getTodos();
 }
 
-function completedTodos(target) {
-  // addNewTodos.value.forEach((item, index) => {
-  //   if (index === target) {
-  //     item.complete = !item.complete;
-  //   }
-  // });
-}
+function completedTodos(target) {}
 </script>
 
 <template>
@@ -48,7 +39,6 @@ function completedTodos(target) {
   <div class="todo-container">
     <input class="form-input" name="newTodo" v-model="todoEmpty" />
     <button class="complete-btn" @click="addTodos">Add</button>
-    <!-- <button class="trash-btn" @click="deleteActivity(index)">Kill</button> -->
   </div>
 
   <div class="list">
