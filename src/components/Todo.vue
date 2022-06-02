@@ -7,29 +7,28 @@ const taskList = ref([]);
 const deleteTodo = ref([]);
 
 const getTodos = async () => {
-  const response = await fetch("http://localhost:4000/todos");
-  const data = await response.json();
-  taskList.value = data;
-  console.log(data);
+  axios.get("http://localhost:4000/todos").then(({ data }) => {
+    taskList.value = data;
+  });
 };
 
-getTodos();
-
 const addTodos = async () => {
-  axios.post("http://localhost:4000/todos", {
-    name: todoEmpty.value,
-    done: false,
-  });
+  axios
+    .post("http://localhost:4000/todos", {
+      name: todoEmpty.value,
+      done: false,
+    })
+    .then(() => getTodos());
   todoEmpty.value = "";
-  getTodos();
 };
 
 function deleteActivity(id) {
-  axios.delete(`http://localhost:4000/todos/${id}`);
-  getTodos();
+  axios.delete(`http://localhost:4000/todos/${id}`).then(() => getTodos());
 }
 
 function completedTodos(target) {}
+
+getTodos();
 </script>
 
 <template>
@@ -42,7 +41,7 @@ function completedTodos(target) {}
   </div>
 
   <div class="list">
-    <div v-for="(todo, index) in taskList" class="listItem" :key="index">
+    <div v-for="(todo, index) in taskList" class="listItem" :key="todo.id">
       <span :class="{ completed: todo.done }">{{ todo.name }} </span>
       <input
         @click="completedTodos(index)"
